@@ -11,17 +11,19 @@ export const obtenerUsuarios = async (req, res) => {
   }
 };
 
+import bcrypt from "bcryptjs";
+
 export const crearUsuario = async (req, res) => {
   try {
     const { nombre, correo, rol, password } = req.body;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10); // 👈 Hasheo aquí
 
     const nuevoUsuario = new Usuario({
       nombre,
       correo,
       rol,
-      password: hashedPassword,  // ✅ Aquí sin comillas
+      password: hashedPassword, // 👈 Asegúrate de que esté bien aquí
     });
 
     await nuevoUsuario.save();
@@ -32,6 +34,7 @@ export const crearUsuario = async (req, res) => {
     res.status(500).json({ message: "Error del servidor" });
   }
 };
+
 
 
 export const actualizarUsuario = async (req, res) => {
