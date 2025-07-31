@@ -11,8 +11,6 @@ export const obtenerUsuarios = async (req, res) => {
   }
 };
 
-import bcrypt from "bcryptjs";
-
 export const crearUsuario = async (req, res) => {
   try {
     const { nombre, correo, rol, password } = req.body;
