@@ -1,4 +1,5 @@
 import Usuario from "../models/Usuario.js";
+import bcrypt from "bcryptjs";
 
 export const obtenerUsuarios = async (req, res) => {
   try {
@@ -12,14 +13,26 @@ export const obtenerUsuarios = async (req, res) => {
 
 export const crearUsuario = async (req, res) => {
   try {
-    const nuevo = new Usuario(req.body);
-    const guardado = await nuevo.save();
-    res.status(201).json(guardado);
+    const { nombre, correo, rol, password } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const nuevoUsuario = new Usuario({
+      nombre,
+      correo,
+      rol,
+      password: hashedPassword,  // ✅ Aquí sin comillas
+    });
+
+    await nuevoUsuario.save();
+
+    res.status(201).json(nuevoUsuario);
   } catch (err) {
     console.error("Error al crear usuario: ", err);
-    res.status(500).json({ message: "Error del sevidor" });
+    res.status(500).json({ message: "Error del servidor" });
   }
 };
+
 
 export const actualizarUsuario = async (req, res) => {
   try {
@@ -36,11 +49,11 @@ export const actualizarUsuario = async (req, res) => {
 };
 
 export const eliminarUsuario = async (req, res) => {
-    try {
-        await Usuario.findByIdAndDelete(req.params.id);
-        res.json({ message: "Usuario eliminado"});
-    } catch (err) {
-        console.error("Error al eliminar usuario: ", err);
-        res.status(500).json({ message: "Error del servidor"});        
-    }
-}
+  try {
+    await Usuario.findByIdAndDelete(req.params.id);
+    res.json({ message: "Usuario eliminado" });
+  } catch (err) {
+    console.error("Error al eliminar usuario: ", err);
+    res.status(500).json({ message: "Error del servidor" });
+  }
+};
